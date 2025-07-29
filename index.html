@@ -297,7 +297,7 @@
   </header>
   
     
-<div id="productContainer" class="product-grid"></div>
+
 
   <!-- Admin Panel Toggle Button -->
   <button class="admin-panel-toggle" id="adminPanelToggle">Admin Panel</button>
@@ -631,6 +631,7 @@ adminPanelToggle.onclick = loginAdmin;
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAnr5Znx1UHaitcWEAIpsc1kxCrqdjJRX0",
@@ -643,8 +644,8 @@ adminPanelToggle.onclick = loginAdmin;
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  const db = getFirestore(app);
 
-  // Wait for full page load
   window.addEventListener("DOMContentLoaded", () => {
     const adminBtn = document.getElementById("adminPanelToggle");
     const adminPanel = document.getElementById("adminPanel");
@@ -654,18 +655,41 @@ adminPanelToggle.onclick = loginAdmin;
         const email = prompt("Enter admin email:");
         const password = prompt("Enter admin password:");
         try {
-          const userCred = await signInWithEmailAndPassword(auth, email, password);
+          await signInWithEmailAndPassword(auth, email, password);
           alert("✅ Login Success!");
-          if (adminPanel) adminPanel.style.display = "flex";
+          adminPanel.style.display = "flex";
         } catch (error) {
           alert("❌ Invalid credentials!");
-          console.log(error.message);
         }
       });
     }
-  });
 
-   // FETCH PRODUCTS & SHOW
+    // ADD PRODUCT
+    const productForm = document.getElementById("adminProductForm");
+    if (productForm) {
+      productForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const name = document.getElementById("apName").value;
+        const price = document.getElementById("apPrice").value;
+        const image = document.getElementById("apImg").value;
+        const desc = document.getElementById("apDesc").value;
+        const badge = document.getElementById("apBadge").value;
+
+        const product = { name, price, image, desc, badge };
+
+        try {
+          await addDoc(collection(db, "products"), product);
+          alert("✅ Product Added!");
+          productForm.reset();
+          fetchAndRenderProducts(); // reload product list
+        } catch (e) {
+          alert("❌ Failed to add product.");
+          console.error(e);
+        }
+      });
+    }
+
+    // FETCH PRODUCTS & SHOW
     async function fetchAndRenderProducts() {
       const productList = document.getElementById("productContainer");
       productList.innerHTML = "";
@@ -686,8 +710,8 @@ adminPanelToggle.onclick = loginAdmin;
 
     fetchAndRenderProducts(); // call on page load
   });
-
 </script>
+
 
  
 
