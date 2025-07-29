@@ -426,7 +426,7 @@
 </style>
   
 <script type="module">
-  // Firebase SDK imports
+  // Firebase SDK imports - ONLY ONCE
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
   import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
@@ -473,11 +473,11 @@
     }
   }
 
-  // All DOM related operations and event listeners go inside DOMContentLoaded
+  // All DOM related operations and event listeners go inside DOMContentLoaded - ONLY ONCE
   window.addEventListener("DOMContentLoaded", () => {
     const adminBtn = document.getElementById("adminPanelToggle");
     const adminPanel = document.getElementById("adminPanel");
-    const adminProductForm = document.getElementById("adminProductForm"); // Define once here
+    const adminProductForm = document.getElementById("adminProductForm");
     
     adminPanel.style.display = "none"; // Initially hide the admin panel
 
@@ -515,16 +515,16 @@
     if (adminProductForm) {
       const apSubmitBtn = document.getElementById("apSubmitBtn");
       if (apSubmitBtn) {
-          apSubmitBtn.after(logoutBtn); // Inserts logoutBtn after apSubmitBtn
+          apSubmitBtn.after(logoutBtn);
       }
     }
 
     // Handle product form submission (Add/Update)
-    if (adminProductForm) { // Using adminProductForm defined above
+    if (adminProductForm) {
       adminProductForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const name = document.getElementById("apName").value;
-        const price = parseInt(document.getElementById("apPrice").value); // Ensure price is a number
+        const price = parseInt(document.getElementById("apPrice").value);
         const image = document.getElementById("apImg").value;
         const desc = document.getElementById("apDesc").value;
         const badge = document.getElementById("apBadge").value;
@@ -533,19 +533,17 @@
 
         try {
           if (editDocId) {
-            // Update existing product
             await updateDoc(doc(db, "products", editDocId), product);
             alert("✅ Product Updated!");
           } else {
-            // Add new product
             await addDoc(collection(db, "products"), product);
             alert("✅ Product Added!");
           }
           adminProductForm.reset();
           document.getElementById("apSubmitBtn").textContent = "Add Product";
           document.getElementById("apCancelBtn").style.display = "none";
-          editDocId = null; // Reset edit state
-          fetchAndRenderProducts(); // Reload product list
+          editDocId = null;
+          fetchAndRenderProducts();
         } catch (e) {
           alert("❌ Failed to save product.");
           console.error(e);
@@ -566,17 +564,16 @@
     
     // FETCH PRODUCTS & SHOW (defined inside DOMContentLoaded for scope)
     async function fetchAndRenderProducts() {
-      const productList = document.getElementById("products-section"); // Changed from productContainer
+      const productList = document.getElementById("products-section");
       productList.innerHTML = "";
-      const adminProductList = document.getElementById("adminProductList"); // Admin list container
-      adminProductList.innerHTML = ""; // Clear admin list too
+      const adminProductList = document.getElementById("adminProductList");
+      adminProductList.innerHTML = "";
 
       const querySnapshot = await getDocs(collection(db, "products"));
       querySnapshot.forEach((doc) => {
         const p = doc.data();
-        const docId = doc.id; // Get document ID for update/delete
+        const docId = doc.id;
 
-        // For main product display
         const card = `
           <div class="product-card">
             ${p.badge ? `<span class="badge" style="${p.badge.toLowerCase().includes('new') ? 'background:#72e7d6;' : ''}">${p.badge}</span>` : ""}
