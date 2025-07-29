@@ -295,6 +295,9 @@
     <p>Sahi daam, sahi samaan — All India Delivery Available</p>
     <div class="wave"></div>
   </header>
+  
+    
+<div id="productContainer" class="product-grid"></div>
 
   <!-- Admin Panel Toggle Button -->
   <button class="admin-panel-toggle" id="adminPanelToggle">Admin Panel</button>
@@ -661,6 +664,29 @@ adminPanelToggle.onclick = loginAdmin;
       });
     }
   });
+
+   // FETCH PRODUCTS & SHOW
+    async function fetchAndRenderProducts() {
+      const productList = document.getElementById("productContainer");
+      productList.innerHTML = "";
+      const querySnapshot = await getDocs(collection(db, "products"));
+      querySnapshot.forEach((doc) => {
+        const p = doc.data();
+        const card = `
+          <div class="product-card">
+            <img src="${p.image}" alt="${p.name}">
+            <h3>${p.name}</h3>
+            <p>${p.desc}</p>
+            <strong>₹${p.price}</strong>
+            ${p.badge ? `<span class="badge">${p.badge}</span>` : ""}
+          </div>`;
+        productList.innerHTML += card;
+      });
+    }
+
+    fetchAndRenderProducts(); // call on page load
+  });
+
 </script>
 
  
