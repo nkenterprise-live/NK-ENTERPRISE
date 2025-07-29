@@ -426,10 +426,12 @@
 </style>
   
 <script type="module">
+  // Firebase SDK imports
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+  import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
+  // Your Firebase Configuration (DO NOT CHANGE THESE VALUES)
   const firebaseConfig = {
     apiKey: "AIzaSyAnr5Znx1UHaitcWEAIpsc1kxCrqdjJRX0",
     authDomain: "nk-enterprise-9036b.firebaseapp.com",
@@ -439,15 +441,44 @@
     appId: "1:350955635615:web:ae0b50ccffcf19377673aa"
   };
 
+  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-   window.addEventListener("DOMContentLoaded"), () => {
+  let editDocId = null; // To store the ID of the document being edited
+
+  // Function to populate form for editing (defined globally)
+  function editProductFirebase(docId, productData) {
+    document.getElementById("apName").value = productData.name;
+    document.getElementById("apPrice").value = productData.price;
+    document.getElementById("apImg").value = productData.image;
+    document.getElementById("apDesc").value = productData.desc;
+    document.getElementById("apBadge").value = productData.badge || "";
+    document.getElementById("apSubmitBtn").textContent = "Update Product";
+    document.getElementById("apCancelBtn").style.display = "inline-block";
+    editDocId = docId;
+  }
+
+  // Function to delete product (defined globally)
+  async function deleteProductFirebase(docId) {
+    if (!confirm("Are you sure you want to delete this product?")) return;
+    try {
+      await deleteDoc(doc(db, "products", docId));
+      alert("✅ Product Deleted!");
+      fetchAndRenderProducts(); // Refresh list after deletion
+    } catch (e) {
+      alert("❌ Failed to delete product.");
+      console.error("Error deleting document: ", e);
+    }
+  }
+
+  // All DOM related operations and event listeners go inside DOMContentLoaded
+  window.addEventListener("DOMContentLoaded", () => {
     const adminBtn = document.getElementById("adminPanelToggle");
     const adminPanel = document.getElementById("adminPanel");
-
-    // ADD THIS LINE:
+    const adminProductForm = document.getElementById("adminProductForm"); // Define once here
+    
     adminPanel.style.display = "none"; // Initially hide the admin panel
 
     if (adminBtn) {
@@ -458,19 +489,42 @@
           await signInWithEmailAndPassword(auth, email, password);
           alert("✅ Login Success!");
           adminPanel.style.display = "flex";
+          fetchAndRenderProducts(); // Refresh products after successful login for admin view
         } catch (error) {
           alert("❌ Invalid credentials!");
         }
       });
     }
-  
-    // ADD PRODUCT
-    const productForm = document.getElementById("adminProductForm");
-    if (productForm) {
-      productForm.addEventListener("submit", async (e) => {
+
+    // Add Logout Button
+    const logoutBtn = document.createElement('button');
+    logoutBtn.textContent = 'Logout';
+    logoutBtn.className = 'ap-btn secondary';
+    logoutBtn.style.marginLeft = '8px';
+    logoutBtn.onclick = async () => {
+      try {
+        await signOut(auth);
+        alert('Logged out successfully!');
+        adminPanel.style.display = 'none'; // Hide panel on logout
+        fetchAndRenderProducts(); // Refresh products in case of any admin-only features later
+      } catch (error) {
+        console.error('Logout error:', error);
+        alert('Logout failed!');
+      }
+    };
+    if (adminProductForm) {
+      const apSubmitBtn = document.getElementById("apSubmitBtn");
+      if (apSubmitBtn) {
+          apSubmitBtn.after(logoutBtn); // Inserts logoutBtn after apSubmitBtn
+      }
+    }
+
+    // Handle product form submission (Add/Update)
+    if (adminProductForm) { // Using adminProductForm defined above
+      adminProductForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const name = document.getElementById("apName").value;
-        const price = document.getElementById("apPrice").value;
+        const price = parseInt(document.getElementById("apPrice").value); // Ensure price is a number
         const image = document.getElementById("apImg").value;
         const desc = document.getElementById("apDesc").value;
         const badge = document.getElementById("apBadge").value;
@@ -478,175 +532,80 @@
         const product = { name, price, image, desc, badge };
 
         try {
-          await addDoc(collection(db, "products"), product);
-          alert("✅ Product Added!");
-          productForm.reset();
-          fetchAndRenderProducts(); // reload product list
+          if (editDocId) {
+            // Update existing product
+            await updateDoc(doc(db, "products", editDocId), product);
+            alert("✅ Product Updated!");
+          } else {
+            // Add new product
+            await addDoc(collection(db, "products"), product);
+            alert("✅ Product Added!");
+          }
+          adminProductForm.reset();
+          document.getElementById("apSubmitBtn").textContent = "Add Product";
+          document.getElementById("apCancelBtn").style.display = "none";
+          editDocId = null; // Reset edit state
+          fetchAndRenderProducts(); // Reload product list
         } catch (e) {
-          alert("❌ Failed to add product.");
+          alert("❌ Failed to save product.");
           console.error(e);
         }
       });
     }
-   
-    // FETCH PRODUCTS & SHOW
-   async function fetchAndRenderProducts() {
-  const productList = document.getElementById("products-section"); // Changed from productContainer
-  productList.innerHTML = "";
-  const adminProductList = document.getElementById("adminProductList"); // Admin list container
-  adminProductList.innerHTML = ""; // Clear admin list too
 
-  const querySnapshot = await getDocs(collection(db, "products"));
-  querySnapshot.forEach((doc) => {
-    const p = doc.data();
-    const docId = doc.id; // Get document ID for update/delete
-
-    // For main product display
-    const card = `
-      <div class="product-card">
-        ${p.badge ? `<span class="badge" style="${p.badge.toLowerCase().includes('new') ? 'background:#72e7d6;' : ''}">${p.badge}</span>` : ""}
-        <img src="${p.image}" alt="${p.name}">
-        <h3>${p.name}</h3>
-        <p>${p.desc}</p>
-        <strong>₹${p.price}</strong>
-        <a class="whatsapp-order" href="https://wa.me/917393004572?text=I%20want%20to%20order%20${encodeURIComponent(p.name)}%20for%20%E2%82%B9${p.price}" target="_blank" aria-label="Order ${p.name} on WhatsApp">
-            <svg viewBox="0 0 32 32"><path d="M16,3C9.373,3,4,8.373,4,15c0,2.491,0.776,4.797,2.244,6.786L4.06,28.464c-0.11,0.293-0.034,0.624,0.194,0.841 c0.143,0.136,0.329,0.208,0.519,0.208c0.092,0,0.185-0.018,0.272-0.055l6.012-2.514C12.83,27.683,14.411,28,16,28 c6.627,0,12-5.373,12-13C28,8.373,22.627,3,16,3z M16,26c-1.494,0-2.968-0.28-4.367-0.832c-0.126-0.049-0.267-0.048-0.391,0.002 l-4.537,1.897l1.88-4.96c0.067-0.178,0.039-0.378-0.075-0.527C6.885,20.098,6,17.609,6,15c0-5.514,4.486-10,10-10 s10,4.486,10,10C26,21.514,21.514,26,16,26z"/><path d="M22.056,19.624c-0.382-0.192-2.259-1.115-2.609-1.243c-0.35-0.128-0.604-0.192-0.859,0.192 c-0.256,0.382-0.987,1.243-1.211,1.501c-0.224,0.256-0.447,0.288-0.829,0.096c-0.382-0.192-1.614-0.596-3.077-1.901 c-1.138-1.016-1.905-2.27-2.131-2.652c-0.224-0.384-0.025-0.591,0.17-0.781c0.173-0.171,0.384-0.448,0.576-0.672 c0.192-0.224,0.256-0.384,0.384-0.64s0.064-0.48-0.032-0.672c-0.096-0.192-0.859-2.074-1.178-2.848s-0.633-0.64-0.859-0.651 c-0.221-0.009-0.474-0.011-0.727-0.011s-0.672,0.096-1.024,0.48c-0.352,0.384-1.344,1.312-1.344,3.2 c0,1.888,1.376,3.715,1.568,3.968c0.192,0.256,2.709,4.141,6.541,5.367c0.914,0.291,1.627,0.464,2.184,0.593 c0.917,0.22,1.752,0.189,2.412,0.115c0.736-0.08,2.259-0.923,2.579-1.816c0.32-0.896,0.32-1.664,0.224-1.824 C22.722,19.872,22.438,19.816,22.056,19.624z"/></svg> Order on WhatsApp
-        </a>
-      </div>`;
-    productList.innerHTML += card;
-
-    // For admin panel product list
-    const adminRow = document.createElement('div');
-    adminRow.className = 'admin-product-list-item';
-    adminRow.innerHTML = `
-        <span>${p.name} (₹${p.price})</span>
-        <button class="edit-btn">Edit</button>
-        <button class="del-btn">Delete</button>
-    `;
-    adminRow.querySelector('.edit-btn').onclick = () => editProductFirebase(docId, p);
-    adminRow.querySelector('.del-btn').onclick = () => deleteProductFirebase(docId);
-    adminProductList.appendChild(adminRow);
-  });
- }
-}
-
-
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js"; // signOut added
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js"; // doc, updateDoc, deleteDoc added
-
-// ... (Firebase config and app initialization)
-
-let editDocId = null; // To store the ID of the document being edited
-
-// Function to populate form for editing
-function editProductFirebase(docId, productData) {
-  document.getElementById("apName").value = productData.name;
-  document.getElementById("apPrice").value = productData.price;
-  document.getElementById("apImg").value = productData.image;
-  document.getElementById("apDesc").value = productData.desc;
-  document.getElementById("apBadge").value = productData.badge || "";
-  document.getElementById("apSubmitBtn").textContent = "Update Product";
-  document.getElementById("apCancelBtn").style.display = "inline-block";
-  editDocId = docId;
-}
-
-// Function to delete product
-async function deleteProductFirebase(docId) {
-  if (!confirm("Are you sure you want to delete this product?")) return;
-  try {
-    await deleteDoc(doc(db, "products", docId));
-    alert("✅ Product Deleted!");
-    fetchAndRenderProducts(); // Refresh list after deletion
-  } catch (e) {
-    alert("❌ Failed to delete product.");
-    console.error("Error deleting document: ", e);
-  }
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-  // ... (existing admin button and login logic, starts around line 668)
-
-  // Add Logout Button (Optional but Recommended)
-  const logoutBtn = document.createElement('button');
-  logoutBtn.textContent = 'Logout';
-  logoutBtn.className = 'ap-btn secondary';
-  logoutBtn.style.marginLeft = '8px';
-  logoutBtn.onclick = async () => {
-    try {
-      await signOut(auth);
-      alert('Logged out successfully!');
-      adminPanel.style.display = 'none'; // Hide panel on logout
-      fetchAndRenderProducts(); // Refresh products in case of any admin-only features later
-    } catch (error) {
-      console.error('Logout error:', error);
-      alert('Logout failed!');
-    }
-  };
-  // Find the form and append logout button
-  const adminProductForm = document.getElementById("adminProductForm");
-  if (adminProductForm) {
-    // Add logout button next to Add/Update button
-    // This button needs to be inserted at an appropriate place within the admin form.
-    // Let's add it right after the existing submit button for simplicity.
-    const apSubmitBtn = document.getElementById("apSubmitBtn");
-    if (apSubmitBtn) {
-        apSubmitBtn.after(logoutBtn); // Inserts logoutBtn after apSubmitBtn
-    }
-  }
-
-
-  // Handle product form submission (Add/Update)
-  const productForm = document.getElementById("adminProductForm");
-  if (productForm) {
-    productForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const name = document.getElementById("apName").value;
-      const price = parseInt(document.getElementById("apPrice").value); // Ensure price is a number
-      const image = document.getElementById("apImg").value;
-      const desc = document.getElementById("apDesc").value;
-      const badge = document.getElementById("apBadge").value;
-
-      const product = { name, price, image, desc, badge };
-
-      try {
-        if (editDocId) {
-          // Update existing product
-          await updateDoc(doc(db, "products", editDocId), product);
-          alert("✅ Product Updated!");
-        } else {
-          // Add new product
-          await addDoc(collection(db, "products"), product);
-          alert("✅ Product Added!");
-        }
-        productForm.reset();
+    // Handle Cancel button for Admin Form
+    const apCancelBtn = document.getElementById("apCancelBtn");
+    if(apCancelBtn) {
+      apCancelBtn.onclick = function() {
+        adminProductForm.reset();
         document.getElementById("apSubmitBtn").textContent = "Add Product";
-        document.getElementById("apCancelBtn").style.display = "none";
-        editDocId = null; // Reset edit state
-        fetchAndRenderProducts(); // Reload product list
-      } catch (e) {
-        alert("❌ Failed to save product.");
-        console.error(e);
+        apCancelBtn.style.display = "none";
+        editDocId = null;
       }
-    });
-  }
-
-  // Handle Cancel button for Admin Form
-  const apCancelBtn = document.getElementById("apCancelBtn");
-  if(apCancelBtn) {
-    apCancelBtn.onclick = function() {
-      adminProductForm.reset();
-      document.getElementById("apSubmitBtn").textContent = "Add Product";
-      apCancelBtn.style.display = "none";
-      editDocId = null;
     }
-  }
+    
+    // FETCH PRODUCTS & SHOW (defined inside DOMContentLoaded for scope)
+    async function fetchAndRenderProducts() {
+      const productList = document.getElementById("products-section"); // Changed from productContainer
+      productList.innerHTML = "";
+      const adminProductList = document.getElementById("adminProductList"); // Admin list container
+      adminProductList.innerHTML = ""; // Clear admin list too
 
-  fetchAndRenderProducts(); // Call on page load to display products
-  
-});
+      const querySnapshot = await getDocs(collection(db, "products"));
+      querySnapshot.forEach((doc) => {
+        const p = doc.data();
+        const docId = doc.id; // Get document ID for update/delete
 
+        // For main product display
+        const card = `
+          <div class="product-card">
+            ${p.badge ? `<span class="badge" style="${p.badge.toLowerCase().includes('new') ? 'background:#72e7d6;' : ''}">${p.badge}</span>` : ""}
+            <img src="${p.image}" alt="${p.name}">
+            <h3>${p.name}</h3>
+            <p>${p.desc}</p>
+            <strong>₹${p.price}</strong>
+            <a class="whatsapp-order" href="https://wa.me/917393004572?text=I%20want%20to%20order%20${encodeURIComponent(p.name)}%20for%20%E2%82%B9${p.price}" target="_blank" aria-label="Order ${p.name} on WhatsApp">
+                <svg viewBox="0 0 32 32"><path d="M16,3C9.373,3,4,8.373,4,15c0,2.491,0.776,4.797,2.244,6.786L4.06,28.464c-0.11,0.293-0.034,0.624,0.194,0.841 c0.143,0.136,0.329,0.208,0.519,0.208c0.092,0,0.185-0.018,0.272-0.055l6.012-2.514C12.83,27.683,14.411,28,16,28 c6.627,0,12-5.373,12-13C28,8.373,22.627,3,16,3z M16,26c-1.494,0-2.968-0.28-4.367-0.832c-0.126-0.049-0.267-0.048-0.391,0.002 l-4.537,1.897l1.88-4.96c0.067-0.178,0.039-0.378-0.075-0.527C6.885,20.098,6,17.609,6,15c0-5.514,4.486-10,10-10 s10,4.486,10,10C26,21.514,21.514,26,16,26z"/><path d="M22.056,19.624c-0.382-0.192-2.259-1.115-2.609-1.243c-0.35-0.128-0.604-0.192-0.859,0.192 c-0.256,0.382-0.987,1.243-1.211,1.501c-0.224,0.256-0.447,0.288-0.829,0.096c-0.382-0.192-1.614-0.596-3.077-1.901 c-1.138-1.016-1.905-2.27-2.131-2.652c-0.224-0.384-0.025-0.591,0.17-0.781c0.173-0.171,0.384-0.448,0.576-0.672 c0.192-0.224,0.256-0.384,0.384-0.64s0.064-0.48-0.032-0.672c-0.096-0.192-0.859-2.074-1.178-2.848s-0.633-0.64-0.859-0.651 c-0.221-0.009-0.474-0.011-0.727-0.011s-0.672,0.096-1.024,0.48c-0.352,0.384-1.344,1.312-1.344,3.2 c0,1.888,1.376,3.715,1.568,3.968c0.192,0.256,2.709,4.141,6.541,5.367c0.914,0.291,1.627,0.464,2.184,0.593 c0.917,0.22,1.752,0.189,2.412,0.115c0.736-0.08,2.259-0.923,2.579-1.816c0.32-0.896,0.32-1.664,0.224-1.824 C22.722,19.872,22.438,19.816,22.056,19.624z"/></svg> Order on WhatsApp
+            </a>
+          </div>`;
+        productList.innerHTML += card;
+
+        // For admin panel product list
+        const adminRow = document.createElement('div');
+        adminRow.className = 'admin-product-list-item';
+        adminRow.innerHTML = `
+            <span>${p.name} (₹${p.price})</span>
+            <button class="edit-btn">Edit</button>
+            <button class="del-btn">Delete</button>
+        `;
+        adminRow.querySelector('.edit-btn').onclick = () => editProductFirebase(docId, p);
+        adminRow.querySelector('.del-btn').onclick = () => deleteProductFirebase(docId);
+        adminProductList.appendChild(adminRow);
+      });
+    }
+
+    fetchAndRenderProducts(); // Call on page load to display products
+  });
 </script>
 
 </body>
