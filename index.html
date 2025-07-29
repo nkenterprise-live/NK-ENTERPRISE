@@ -624,7 +624,7 @@ adminPanelToggle.onclick = loginAdmin;
     }
   }
 </style>
-
+  
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
@@ -633,7 +633,7 @@ adminPanelToggle.onclick = loginAdmin;
     apiKey: "AIzaSyAnr5Znx1UHaitcWEAIpsc1kxCrqdjJRX0",
     authDomain: "nk-enterprise-9036b.firebaseapp.com",
     projectId: "nk-enterprise-9036b",
-    storageBucket: "nk-enterprise-9036b.firebasestorage.app",
+    storageBucket: "nk-enterprise-9036b.appspot.com",
     messagingSenderId: "350955635615",
     appId: "1:350955635615:web:ae0b50ccffcf19377673aa"
   };
@@ -641,19 +641,29 @@ adminPanelToggle.onclick = loginAdmin;
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  window.loginAdmin = async function () {
-    const email = prompt("Enter admin email:");
-    const password = prompt("Enter admin password:");
-    try {
-      const userCred = await signInWithEmailAndPassword(auth, email, password);
-      alert("✅ Login Success!");
-      document.getElementById("adminPanel").style.display = "flex";
-    } catch (error) {
-      alert("❌ Invalid credentials!");
-      console.log(error.message);
+  // Wait for full page load
+  window.addEventListener("DOMContentLoaded", () => {
+    const adminBtn = document.getElementById("adminPanelToggle");
+    const adminPanel = document.getElementById("adminPanel");
+
+    if (adminBtn) {
+      adminBtn.addEventListener("click", async () => {
+        const email = prompt("Enter admin email:");
+        const password = prompt("Enter admin password:");
+        try {
+          const userCred = await signInWithEmailAndPassword(auth, email, password);
+          alert("✅ Login Success!");
+          if (adminPanel) adminPanel.style.display = "flex";
+        } catch (error) {
+          alert("❌ Invalid credentials!");
+          console.log(error.message);
+        }
+      });
     }
-  };
+  });
 </script>
+
+ 
 
 
 </body>
