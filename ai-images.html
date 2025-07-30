@@ -1,94 +1,413 @@
-<!-- Save this as ai-images.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AI Image Samples | NK Enterprise</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;400&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Roboto', sans-serif;
-      background: #f2fbf8;
-      color: #222;
-    }
-    header {
-      background: linear-gradient(95deg, #050505 0%, #302e2e 100%);
-      color: white;
-      padding: 40px 20px;
-      text-align: center;
-    }
-    header h1 {
-      font-family: 'Montserrat';
-      margin: 0;
-      font-size: 2.5em;
-    }
-    .content {
-      max-width: 960px;
-      margin: 30px auto;
-      padding: 0 20px;
-    }
-    p {
-      font-size: 1.1em;
-      line-height: 1.6;
-    }
-    .gallery {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 18px;
-      margin-top: 20px;
-      justify-content: center;
-    }
-    .gallery img {
-      width: 240px;
-      height: auto;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-      transition: transform 0.3s;
-    }
-    .gallery img:hover {
-      transform: scale(1.05);
-    }
-    .back-btn {
-      display: inline-block;
-      margin-top: 30px;
-      background: #080808;
-      color: #fff;
-      padding: 10px 18px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: bold;
-      transition: background 0.3s;
-    }
-    .back-btn:hover {
-      background: #128c7e;
-    }
-    footer {
-      margin-top: 50px;
-      padding: 24px;
-      text-align: center;
-      font-size: 0.95em;
-      background: #0e3742;
-      color: #ccc;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Images - NK ENTERPRISE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"> <style>
+        /* Variables */
+        :root {
+            --primary-heading: #34495e; /* Dark blue-grey for main headings */
+            --primary-text: #4a4a4a;   /* Dark grey for general text */
+            --secondary-text: #7f8c8d; /* Mid-grey for secondary text */
+            --accent: #27ae60;         /* Muted Green for accents/highlights */
+            --cta-button: #25D366;     /* WhatsApp Green for the button itself */
+            --cta-button-hover: #1DA851; /* Darker WhatsApp Green */
+            --background-light: #fefefe; /* Very light, almost white background */
+            --card-background: #ffffff; /* Pure white for cards */
+            --header-footer-dark: linear-gradient(95deg, #080808 0%, #070707 100%); /* Existing dark gradient */
+            --white: #ffffff;
+            --radius: 8px;
+            --font-large: 2.5em;
+            --font-medium: 1.8em;
+            --font-small: 0.9em;
+        }
+
+        /* General Body & HTML */
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', Arial, sans-serif;
+            background: var(--background-light);
+            color: var(--primary-text);
+        }
+
+        /* Container for content width */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header#main-header {
+            background: var(--header-footer-dark);
+            color: var(--white);
+            padding: 15px 0;
+        }
+
+        header#main-header .nav-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        header#main-header .nav-links li {
+            margin-left: 20px;
+        }
+
+        header#main-header .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 400;
+            transition: color 0.3s ease;
+        }
+
+        header#main-header .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        header#main-header .logo {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: var(--font-medium);
+            font-weight: 700;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Admin Button */
+        .admin-panel-toggle {
+            position: absolute;
+            top: 48px;
+            right: -60px;
+            z-index: 1201;
+            background: #ffb300;
+            color: #222;
+            padding: 7px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(21,81,98,0.16);
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.18s;
+        }
+        .admin-panel-toggle:hover {
+            background: #ffd24d;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #f0f4f7, #e6eff4); /* Lighter, more subtle gradient for AI */
+            color: var(--primary-heading);
+            text-align: center;
+            padding: 80px 20px;
+        }
+        .hero h1 {
+            font-size: var(--font-large);
+            margin-bottom: 20px;
+            color: var(--primary-heading);
+        }
+        .hero p {
+            font-size: 1.2em;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: var(--primary-text);
+        }
+
+        /* Section Styling */
+        section {
+            padding: 60px 0;
+            background: var(--card-background);
+            margin-bottom: 20px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.03);
+        }
+        section:nth-child(odd) {
+            background: var(--background-light);
+        }
+        section h2 {
+            text-align: center;
+            font-size: var(--font-medium);
+            margin-bottom: 40px;
+            color: var(--primary-heading);
+        }
+
+        /* Image Gallery */
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            justify-content: center; /* Center items if they don't fill the row */
+        }
+        .gallery-item {
+            background: var(--card-background);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 250px; /* Fixed height for consistent look */
+            object-fit: cover; /* Cover the area, crop if needed */
+            display: block;
+        }
+        .gallery-item .caption {
+            padding: 15px;
+            text-align: center;
+            font-size: 0.9em;
+            color: var(--secondary-text);
+        }
+
+        /* Image Request Form */
+        .request-form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--card-background);
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .request-form-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--primary-text);
+        }
+        .request-form-container input[type="text"],
+        .request-form-container textarea {
+            width: calc(100% - 20px); /* Adjust for padding */
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box; /* Include padding in width */
+        }
+        .request-form-container textarea {
+            resize: vertical; /* Allow vertical resizing */
+            min-height: 100px;
+        }
+        .request-form-container .submit-btn {
+            display: block;
+            width: 100%;
+            background: var(--accent);
+            color: var(--white);
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+        .request-form-container .submit-btn:hover {
+            background: #219d55; /* Darker accent */
+            transform: translateY(-2px);
+        }
+        .request-form-container p.note {
+            font-size: 0.9em;
+            color: var(--secondary-text);
+            margin-top: 20px;
+            text-align: center;
+        }
+
+
+        /* Contact Button Section (re-using join-btn style) */
+        .contact-section {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--accent);
+            color: var(--white);
+            border-radius: var(--radius);
+            margin-top: 20px;
+        }
+        .contact-section h2 {
+            color: var(--white);
+            margin-bottom: 20px;
+        }
+        .contact-btn { /* Re-using join-btn for consistency */
+            display: inline-block;
+            background: var(--cta-button);
+            color: var(--white);
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: background 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .contact-btn:hover {
+            background: var(--cta-button-hover);
+            transform: translateY(-3px);
+        }
+
+        /* Entrance Animation for AI Images */
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .animated-section-ai {
+            opacity: 0; /* Initially hidden */
+            animation: fadeInScale 1s ease-out forwards;
+        }
+        .animated-section-ai:nth-child(1) { animation-delay: 0.2s; }
+        .animated-section-ai:nth-child(2) { animation-delay: 0.4s; }
+        .animated-section-ai:nth-child(3) { animation-delay: 0.6s; }
+        .animated-section-ai:nth-child(4) { animation-delay: 0.8s; }
+
+
+        /* Footer */
+        footer {
+            background: #1b1b1b;
+            color: var(--secondary-text);
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 50px;
+            border-top-left-radius: var(--radius);
+            border-top-right-radius: var(--radius);
+        }
+        footer p {
+            margin: 0;
+            font-size: var(--font-small);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+            .hero p {
+                font-size: 1em;
+            }
+            header#main-header .nav-links {
+                display: none;
+            }
+            nav {
+                justify-content: center;
+            }
+            .image-gallery {
+                grid-template-columns: 1fr;
+            }
+            .admin-panel-toggle {
+                top: 10px;
+                right: 10px;
+                padding: 5px 10px;
+                font-size: 0.9em;
+            }
+            .request-form-container {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>🎨 AI Image Samples</h1>
-  </header>
-  <div class="content">
-    <p>Here are some examples of AI-generated images we can create for your branding, products, or marketing materials.</p>
-    <div class="gallery">
-      <img src="images/sample1.jpg" alt="Sample 1" />
-      <img src="images/sample2.jpg" alt="Sample 2" />
-      <img src="images/sample3.jpg" alt="Sample 3" />
-    </div>
-    <a class="back-btn" href="index.html">← Back to Home</a>
-  </div>
-  <footer>
-    &copy; 2025 NK ENTERPRISE — All Rights Reserved.
-  </footer>
+    <header id="main-header">
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">NK ENTERPRISE</a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#products">Products</a></li>
+                    <li><a href="dropshipping.html">Dropshipping</a></li>
+                    <li><a href="ai-images.html">AI Images</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+                <button class="admin-panel-toggle" id="adminPanelToggle">Admin Panel</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero animated-section-ai">
+            <div class="container">
+                <h1>Unlock Creativity with AI-Generated Images</h1>
+                <p>Transform your ideas into stunning visuals with our advanced AI image generation service. Perfect for businesses, content creators, and personal projects.</p>
+                <a href="https://wa.me/917393004572?text=I%20want%20to%20know%20more%20about%20AI%20image%20generation%20services." class="contact-btn" target="_blank">Get Custom Images on WhatsApp</a>
+            </div>
+        </section>
+
+        <section class="animated-section-ai">
+            <div class="container">
+                <h2>Our AI Image Gallery</h2>
+                <div class="image-gallery">
+                    <div class="gallery-item">
+                        <img src="assets/ai-image1.jpg" alt="AI Generated Image 1">
+                        <div class="caption">Futuristic city skyline at sunset, cyberpunk style.</div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="assets/ai-image2.jpg" alt="AI Generated Image 2">
+                        <div class="caption">Mystical forest with glowing ancient trees.</div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="assets/ai-image3.jpg" alt="AI Generated Image 3">
+                        <div class="caption">Detailed portrait of a warrior cat in armor.</div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="assets/ai-image4.jpg" alt="AI Generated Image 4">
+                        <div class="caption">Abstract liquid metal sculpture, modern art.</div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="assets/ai-image5.jpg" alt="AI Generated Image 5">
+                        <div class="caption">A cozy, minimalist living room with natural light.</div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="assets/ai-image6.jpg" alt="AI Generated Image 6">
+                        <div class="caption">Fantasy landscape with floating islands and waterfalls.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="animated-section-ai">
+            <div class="container">
+                <h2>Request a Custom AI Image</h2>
+                <div class="request-form-container">
+                    <form action="https://formspree.io/f/YOUR_FORMSPREE_CODE" method="POST">
+                        <label for="name">Your Name:</label>
+                        <input type="text" id="name" name="name" required>
+
+                        <label for="email">Your Email (Optional):</label>
+                        <input type="text" id="email" name="email">
+
+                        <label for="image-description">Describe Your Desired Image:</label>
+                        <textarea id="image-description" name="image-description" placeholder="E.g., 'A professional logo for a tech startup, featuring a clean, minimalist design with blue and white colors, symbolizing innovation.'" required></textarea>
+
+                        <button type="submit" class="submit-btn">Send My Request</button>
+                        <p class="note">We will contact you via email or WhatsApp to discuss your image requirements and delivery. If you prefer WhatsApp, please mention your number in the description.</p>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact-section animated-section-ai">
+            <div class="container">
+                <h2>Have Questions?</h2>
+                <p>Reach out to us directly for any queries regarding AI image generation or custom requests.</p>
+                <a href="https://wa.me/917393004572?text=I%20have%20a%20question%20about%20AI%20Images." class="contact-btn" target="_blank">Contact Us on WhatsApp</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2024 NK ENTERPRISE. All rights reserved.</p>
+        </div>
+    </footer>
 </body>
 </html>

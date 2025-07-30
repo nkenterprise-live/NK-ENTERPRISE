@@ -1,86 +1,373 @@
-<!-- Save this as dropshipping.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dropshipping | NK Enterprise</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;400&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Roboto', sans-serif;
-      background: #f9fafb;
-      color: #222;
-    }
-    header {
-      background: linear-gradient(95deg, #080808 0%, #3c3d3d 100%);
-      color: white;
-      padding: 40px 20px;
-      text-align: center;
-    }
-    header h1 {
-      font-family: 'Montserrat';
-      margin: 0;
-      font-size: 2.5em;
-    }
-    .container {
-      max-width: 900px;
-      margin: 30px auto;
-      padding: 0 20px;
-    }
-    ul {
-      margin-top: 20px;
-      padding-left: 22px;
-      font-size: 1.1em;
-      line-height: 1.6;
-    }
-    .highlight {
-      font-weight: bold;
-      color: #147f75;
-    }
-    .back-btn {
-      display: inline-block;
-      margin-top: 30px;
-      background: #0a0a0a;
-      color: #fff;
-      padding: 10px 18px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: bold;
-      transition: background 0.3s;
-    }
-    .back-btn:hover {
-      background: #128c7e;
-    }
-    footer {
-      margin-top: 50px;
-      padding: 24px;
-      text-align: center;
-      font-size: 0.95em;
-      background: #0e3742;
-      color: #ccc;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropshipping - NK ENTERPRISE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"> <style>
+        /* Variables */
+        :root {
+            --primary-heading: #34495e; /* Dark blue-grey for main headings */
+            --primary-text: #0a0505;   /* Dark grey for general text */
+            --secondary-text: #7f8c8d; /* Mid-grey for secondary text */
+            --accent: #110f01;         /* Muted Green for accents/highlights */
+            --cta-button: #0f0f0f;     /* WhatsApp Green for the button itself */
+            --cta-button-hover: #048f35; /* Darker WhatsApp Green */
+            --background-light: #fefefe; /* Very light, almost white background */
+            --card-background: #ffffff; /* Pure white for cards */
+            --header-footer-dark: linear-gradient(95deg, #f8f7f7 0%, #080808 100%); /* Existing dark gradient */
+            --white: #f5f1f1;
+            --radius: 8px;
+            --font-large: 2.5em;
+            --font-medium: 1.8em;
+            --font-small: 0.9em;
+        }
+
+        /* General Body & HTML */
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', Arial, sans-serif;
+            background: var(--background-light); /* Changed */
+            color: var(--primary-text); /* Changed */
+        }
+
+        /* Container for content width */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header#main-header {
+            background: var(--header-footer-dark); /* Changed to variable */
+            color: var(--white);
+            padding: 15px 0;
+            /* Header position will be relative as per user's last request */
+        }
+
+        header#main-header .nav-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        header#main-header .nav-links li {
+            margin-left: 30px;
+        }
+
+        header#main-header .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 400;
+            transition: color 0.3s ease;
+        }
+
+        header#main-header .nav-links a:hover {
+            color: var(--accent); /* Changed */
+        }
+
+        header#main-header .logo {
+            color: var(--accent); /* Changed */
+            text-decoration: none;
+            font-size: var(--font-medium);
+            font-weight: 700;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Admin Button */
+        .admin-panel-toggle {
+            position: absolute;
+            top: 48px;
+            right: -60px;
+            z-index: 1201;
+            background: #ffb300; /* Keeping this specific color, as it's functional */
+            color: #222;
+            padding: 7px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(21,81,98,0.16);
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.18s;
+        }
+        .admin-panel-toggle:hover {
+            background: #ffd24d;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #e0f7fa, #b2ebf2); /* Changed */
+            color: var(--primary-heading); /* Changed */
+            text-align: center;
+            padding: 80px 20px;
+        }
+        .hero h1 {
+            font-size: var(--font-large);
+            margin-bottom: 20px;
+            color: var(--primary-heading); /* Changed */
+        }
+        .hero p {
+            font-size: 1.2em;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: var(--primary-text); /* Changed */
+        }
+
+        /* Section Styling */
+        section {
+            padding: 60px 0;
+            background: var(--card-background); /* Changed */
+            margin-bottom: 20px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.03); /* Changed to lighter shadow */
+        }
+        section:nth-child(odd) {
+            background: var(--background-light); /* Changed */
+        }
+        section h2 {
+            text-align: center;
+            font-size: var(--font-medium);
+            margin-bottom: 40px;
+            color: var(--primary-heading); /* Changed */
+        }
+
+        /* Dropshipping Specific Styles */
+        .dropship-benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            text-align: center;
+        }
+        .benefit-card {
+            background: var(--card-background); /* Changed */
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03); /* Changed to lighter shadow */
+            transition: transform 0.3s ease;
+        }
+        .benefit-card:hover {
+            transform: translateY(-5px);
+        }
+        .benefit-card h3 {
+            color: var(--accent); /* Changed */
+            margin-top: 15px;
+            font-size: 1.4em;
+        }
+        .benefit-card p {
+            font-size: 1em;
+            color: var(--secondary-text); /* Changed */
+        }
+        .benefit-card img { /* For icons if you use them */
+            width: 60px;
+            height: 60px;
+            margin-bottom: 10px;
+        }
+
+        /* Video Section */
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            max-width: 400px; /* Max width for the video */
+            margin: 0 auto;
+            border-radius: var(--radius);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.08); /* Changed to lighter shadow */
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .video-section p { /* New rule if needed for text below video */
+            color: var(--secondary-text); /* Changed */
+        }
+
+        /* Join Now Button Section */
+        .join-section {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--accent); /* Changed */
+            color: var(--white);
+            border-radius: var(--radius);
+            margin-top: 20px;
+        }
+        .join-section h2 {
+            color: var(--white);
+            margin-bottom: 20px;
+        }
+        .join-btn {
+            display: inline-block;
+            background: var(--cta-button); /* Changed */
+            color: var(--white);
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: background 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Changed to lighter shadow */
+        }
+        .join-btn:hover {
+            background: var(--cta-button-hover); /* Changed */
+            transform: translateY(-3px);
+        }
+
+        /* Drop & Ship Animation */
+        @keyframes fadeInDrop {
+            0% { opacity: 0; transform: translateY(-50px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .animated-section {
+            opacity: 0;
+            animation: fadeInDrop 1s ease-out forwards;
+        }
+        .animated-section:nth-child(1) { animation-delay: 0.2s; }
+        .animated-section:nth-child(2) { animation-delay: 0.4s; }
+        .animated-section:nth-child(3) { animation-delay: 0.6s; }
+        .animated-section:nth-child(4) { animation-delay: 0.8s; }
+        .animated-section:nth-child(5) { animation-delay: 1.0s; }
+
+
+        /* Footer */
+        footer {
+            background: #222222; /* Changed to variable */
+            color: white; /* Changed */
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 50px;
+            border-top-left-radius: var(--radius);
+            border-top-right-radius: var(--radius);
+        }
+        footer p {
+            margin: 0;
+            font-size: var(--font-small);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+            .hero p {
+                font-size: 1em;
+            }
+            header#main-header .nav-links {
+                display: none;
+            }
+            nav {
+                justify-content: center;
+            }
+            .dropship-benefits {
+                grid-template-columns: 1fr;
+            }
+            .admin-panel-toggle {
+                top: 10px;
+                right: 10px;
+                padding: 5px 10px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>📦 Dropshipping with NK Enterprise</h1>
-  </header>
-  <div class="container">
-    <p><span class="highlight">Dropshipping</span> is a great way to earn without investing in stock or storage. Here’s how it works with us:</p>
-    <ul>
-      <li>You select products from our live catalog.</li>
-      <li>You promote them online (WhatsApp, Facebook, Instagram etc.).</li>
-      <li>Customer places order with you → You forward it to us.</li>
-      <li>We deliver directly to your customer — with your branding.</li>
-      <li><strong>You earn the profit margin!</strong></li>
-    </ul>
-    <p>🚀 No stock tension. No warehouse needed. Start your journey today!</p>
-    <a class="back-btn" href="index.html">← Back to Home</a>
-  </div>
-  <footer>
-    &copy; 2025 NK ENTERPRISE — Empowering Indian Entrepreneurs.
-  </footer>
+    <header id="main-header">
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">NK ENTERPRISE</a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#products">Products</a></li>
+                    <li><a href="dropshipping.html">Dropshipping</a></li>
+                    <li><a href="ai-images.html">AI Images</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+                <button class="admin-panel-toggle" id="adminPanelToggle">Admin Panel</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero animated-section">
+            <div class="container">
+                <h1>Become a Dropshipper with NK ENTERPRISE</h1>
+                <p>Start your online business today without investing in inventory. We handle the products, packaging, and shipping, so you can focus on selling!</p>
+                <a href="https://wa.me/917393004572?text=I%20want%20to%20join%20you%20as%20dropshipper." class="join-btn" target="_blank">Join Now on WhatsApp</a>
+            </div>
+        </section>
+
+        <section class="animated-section">
+            <div class="container">
+                <h2>Why Dropship with Us?</h2>
+                <div class="dropship-benefits">
+                    <div class="benefit-card">
+                        <h3>No Inventory Risk</h3>
+                        <p>No need to buy and store products. We manage all the stock for you.</p>
+                    </div>
+                    <div class="benefit-card">
+                        <h3>Wide Product Range</h3>
+                        <p>Access to a vast selection of gadgets and accessories without upfront cost.</p>
+                    </div>
+                    <div class="benefit-card">
+                        <h3>High Profit Margins</h3>
+                        <p>Set your own prices and keep the difference. Earn big on every sale.</p>
+                    </div>
+                    <div class="benefit-card">
+                        <h3>Seamless Logistics</h3>
+                        <p>We handle packaging, and reliable delivery directly to your customers.</p>
+                    </div>
+                    <div class="benefit-card">
+                        <h3>Start Instantly</h3>
+                        <p>Get started with minimal setup time and effort. No experience required.</p>
+                    </div>
+                    <div class="benefit-card">
+                        <h3>Dedicated Support</h3>
+                        <p>Our team is here to assist you every step of the way.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="animated-section">
+            <div class="container">
+                <h2>How Dropshipping Works (Watch Video)</h2>
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/YOUR_YOUTUBE_VIDEO_ID" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <p class="video-section-text" style="text-align: center; margin-top: 30px; font-size: 1.1em;">
+                    Watch this video to understand the simple process of becoming a successful dropshipper.
+                </p>
+            </div>
+        </section>
+
+        <section class="join-section animated-section">
+            <div class="container">
+                <h2>Ready to Start Your Business Journey?</h2>
+                <p>Join our network of successful dropshippers today and unlock your earning potential.</p>
+                <a href="https://wa.me/917393004572?text=I%20want%20to%20join%20you%20as%20dropshipper." class="join-btn" target="_blank">Join Now on WhatsApp</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2024 NK ENTERPRISE. All rights reserved.</p>
+        </div>
+    </footer>
 </body>
 </html>
